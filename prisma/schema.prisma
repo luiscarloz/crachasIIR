@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+
+  @@map("crachas_users")
+}
+
+model Area {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  createdAt   DateTime     @default(now())
+  volunteers  Volunteer[]
+
+  @@map("crachas_areas")
+}
+
+model Volunteer {
+  id        String    @id @default(cuid())
+  name      String
+  areaId    String
+  area      Area      @relation(fields: [areaId], references: [id])
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  checkins  CheckIn[]
+
+  @@map("crachas_volunteers")
+}
+
+model CheckIn {
+  id          String      @id @default(cuid())
+  volunteerId String
+  volunteer   Volunteer   @relation(fields: [volunteerId], references: [id])
+  serviceType ServiceType
+  checkedInAt DateTime    @default(now())
+  checkedOutAt DateTime?
+  date        DateTime    @db.Date
+
+  @@map("crachas_checkins")
+}
+
+enum ServiceType {
+  DOMINGO_1030
+  DOMINGO_1830
+
+  @@map("crachas_service_type")
+}
