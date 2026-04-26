@@ -2,11 +2,12 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 
 const navItems = [
-  { href: "/dashboard", label: "Check-in de Crachás" },
+  { href: "/dashboard", label: "Check-in" },
   { href: "/dashboard/voluntarios", label: "Voluntarios" },
   { href: "/dashboard/relatorios", label: "Relatorios" },
 ];
@@ -35,14 +36,22 @@ export default function DashboardLayout({
   if (!session) return null;
 
   return (
-    <div className="min-h-screen">
-      <nav className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-[#f4f1ea]">
+      <nav className="bg-white/95 shadow-sm border-b border-stone-200">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-8">
-              <span className="font-bold text-lg text-gray-900">
-                IIR Brasil
-              </span>
+              <Link href="/dashboard" className="flex items-center gap-3">
+                <Image
+                  src="/iir-logo.svg"
+                  alt="IIR"
+                  width={51}
+                  height={36}
+                  className="h-9 w-auto"
+                  priority
+                />
+                <span className="sr-only">IIR</span>
+              </Link>
               <div className="flex gap-1">
                 {navItems.map((item) => (
                   <Link
@@ -50,8 +59,8 @@ export default function DashboardLayout({
                     href={item.href}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       pathname === item.href
-                        ? "bg-blue-50 text-blue-700"
-                        : "text-gray-600 hover:bg-gray-100"
+                        ? "bg-stone-950 text-white"
+                        : "text-stone-600 hover:bg-stone-100"
                     }`}
                   >
                     {item.label}
@@ -61,7 +70,7 @@ export default function DashboardLayout({
             </div>
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="text-sm text-gray-500 hover:text-gray-700"
+              className="text-sm text-stone-500 hover:text-stone-900"
             >
               Sair
             </button>

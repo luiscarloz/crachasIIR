@@ -3,8 +3,8 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Check-in de Crachás - IIR Brasil",
-  description: "Sistema de check-in de crachas para voluntarios IIR Brasil",
+  title: "Check-in de Voluntários - IIR",
+  description: "Sistema de check-in de voluntarios IIR",
 };
 
 export default function RootLayout({

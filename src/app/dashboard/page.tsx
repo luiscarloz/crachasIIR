@@ -148,16 +148,30 @@ export default function CheckInPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Check-in de Crachás</h1>
-        <p className="text-gray-500 mt-1">
-          Check-in de Voluntários IIR Brasil - {SERVICE_LABELS[serviceType]} - {formatDate(new Date())}
-        </p>
+    <div className="space-y-6">
+      <div className="bg-stone-950 text-white rounded-lg p-6 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-sm font-medium text-stone-300">
+              {SERVICE_LABELS[serviceType]} - {formatDate(new Date())}
+            </p>
+            <h1 className="text-3xl font-bold mt-1">Check-in de Voluntários</h1>
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="rounded-lg bg-white/10 px-4 py-3">
+              <p className="text-stone-300">Para devolver</p>
+              <p className="text-2xl font-bold">{pendingCheckouts}</p>
+            </div>
+            <div className="rounded-lg bg-white/10 px-4 py-3">
+              <p className="text-stone-300">Registros</p>
+              <p className="text-2xl font-bold">{checkins.length}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
-        <h2 className="font-semibold text-gray-900">Cadastrar voluntário na chegada</h2>
+      <div className="bg-white rounded-lg shadow-sm border border-stone-200 p-6 space-y-4">
+        <h2 className="font-semibold text-stone-950">Cadastrar voluntário na chegada</h2>
         <form onSubmit={handleQuickAdd} className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -166,7 +180,7 @@ export default function CheckInPage() {
             <select
               value={serviceType}
               onChange={(e) => setServiceType(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
             >
               {Object.entries(SERVICE_LABELS).map(([key, label]) => (
                 <option key={key} value={key}>
@@ -185,7 +199,7 @@ export default function CheckInPage() {
               value={newVolunteerName}
               onChange={(e) => setNewVolunteerName(e.target.value)}
               placeholder="Nome completo"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
             />
           </div>
 
@@ -196,7 +210,7 @@ export default function CheckInPage() {
             <select
               value={newVolunteerArea}
               onChange={(e) => setNewVolunteerArea(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
             >
               <option value="">Selecione a área</option>
               {areas.map((a) => (
@@ -211,7 +225,7 @@ export default function CheckInPage() {
             <button
               type="submit"
               disabled={!newVolunteerName.trim() || !newVolunteerArea || loading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium"
+              className="w-full bg-stone-950 text-white py-2 px-4 rounded-lg hover:bg-stone-800 disabled:opacity-50 font-medium"
             >
               {loading ? "Registrando..." : "Cadastrar e retirar crachá"}
             </button>
@@ -231,8 +245,8 @@ export default function CheckInPage() {
         )}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
-        <h2 className="font-semibold text-gray-900">Voluntário já cadastrado</h2>
+      <div className="bg-white rounded-lg shadow-sm border border-stone-200 p-6 space-y-4">
+        <h2 className="font-semibold text-stone-950">Voluntário já cadastrado</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -241,7 +255,7 @@ export default function CheckInPage() {
             <select
               value={serviceType}
               onChange={(e) => setServiceType(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
             >
               {Object.entries(SERVICE_LABELS).map(([key, label]) => (
                 <option key={key} value={key}>
@@ -258,7 +272,7 @@ export default function CheckInPage() {
             <select
               value={selectedArea}
               onChange={(e) => setSelectedArea(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
             >
               <option value="">Selecione a área</option>
               {areas.map((a) => (
@@ -276,7 +290,7 @@ export default function CheckInPage() {
             <select
               value={selectedVolunteer}
               onChange={(e) => setSelectedVolunteer(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
               disabled={!selectedArea}
             >
               <option value="">Selecione o voluntário</option>
@@ -292,7 +306,7 @@ export default function CheckInPage() {
             <button
               onClick={handleCheckin}
               disabled={!selectedVolunteer || loading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium"
+              className="w-full bg-stone-950 text-white py-2 px-4 rounded-lg hover:bg-stone-800 disabled:opacity-50 font-medium"
             >
               {loading ? "Registrando..." : "Retirar crachá"}
             </button>
@@ -300,10 +314,10 @@ export default function CheckInPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border">
+      <div className="bg-white rounded-lg shadow-sm border border-stone-200">
         <div className="p-4 border-b">
-          <h2 className="font-semibold text-gray-900">
-            Crachás do culto - {SERVICE_LABELS[serviceType]}
+          <h2 className="font-semibold text-stone-950">
+            Voluntários do culto - {SERVICE_LABELS[serviceType]}
             <span className="ml-2 text-sm font-normal text-gray-500">
               ({pendingCheckouts} para devolver, {checkins.length} registros)
             </span>
