@@ -46,6 +46,7 @@ export default function CheckInPage() {
   const [serviceType, setServiceType] = useState(getDefaultService());
   const [newVolunteerName, setNewVolunteerName] = useState("");
   const [newVolunteerArea, setNewVolunteerArea] = useState("");
+  const [showAddVolunteer, setShowAddVolunteer] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
@@ -131,6 +132,8 @@ export default function CheckInPage() {
 
     const volunteer = await volunteerRes.json();
     setNewVolunteerName("");
+    setNewVolunteerArea("");
+    setShowAddVolunteer(false);
     setSelectedArea(newVolunteerArea);
     await loadVolunteers(newVolunteerArea);
     setLoading(false);
@@ -171,66 +174,16 @@ export default function CheckInPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-stone-200 p-6 space-y-4">
-        <h2 className="font-semibold text-stone-950">Cadastrar voluntário na chegada</h2>
-        <form onSubmit={handleQuickAdd} className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Culto
-            </label>
-            <select
-              value={serviceType}
-              onChange={(e) => setServiceType(e.target.value)}
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
-            >
-              {Object.entries(SERVICE_LABELS).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nome do voluntário
-            </label>
-            <input
-              type="text"
-              value={newVolunteerName}
-              onChange={(e) => setNewVolunteerName(e.target.value)}
-              placeholder="Nome completo"
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Área
-            </label>
-            <select
-              value={newVolunteerArea}
-              onChange={(e) => setNewVolunteerArea(e.target.value)}
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
-            >
-              <option value="">Selecione a área</option>
-              {areas.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-end">
-            <button
-              type="submit"
-              disabled={!newVolunteerName.trim() || !newVolunteerArea || loading}
-              className="w-full bg-stone-950 text-white py-2 px-4 rounded-lg hover:bg-stone-800 disabled:opacity-50 font-medium"
-            >
-              {loading ? "Registrando..." : "Cadastrar e retirar crachá"}
-            </button>
-          </div>
-        </form>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="font-semibold text-stone-950">Check-in de voluntário</h2>
+          <button
+            type="button"
+            onClick={() => setShowAddVolunteer(true)}
+            className="w-full sm:w-auto rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100"
+          >
+            Cadastrar voluntário novo
+          </button>
+        </div>
 
         {message.text && (
           <div
@@ -243,10 +196,7 @@ export default function CheckInPage() {
             {message.text}
           </div>
         )}
-      </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-stone-200 p-6 space-y-4">
-        <h2 className="font-semibold text-stone-950">Voluntário já cadastrado</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -306,13 +256,89 @@ export default function CheckInPage() {
             <button
               onClick={handleCheckin}
               disabled={!selectedVolunteer || loading}
-              className="w-full bg-stone-950 text-white py-2 px-4 rounded-lg hover:bg-stone-800 disabled:opacity-50 font-medium"
+              className="w-full bg-stone-950 text-white py-2 px-4 rounded-lg hover:bg-stone-800 disabled:bg-stone-400 font-medium"
             >
               {loading ? "Registrando..." : "Retirar crachá"}
             </button>
           </div>
         </div>
       </div>
+
+      {showAddVolunteer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-stone-950">
+                  Cadastrar voluntário novo
+                </h2>
+                <p className="mt-1 text-sm text-stone-500">
+                  Depois do cadastro, o check-in já é registrado para o culto selecionado.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddVolunteer(false)}
+                className="rounded-lg px-3 py-1 text-xl leading-none text-stone-500 hover:bg-stone-100 hover:text-stone-900"
+                aria-label="Fechar"
+              >
+                x
+              </button>
+            </div>
+
+            <form onSubmit={handleQuickAdd} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nome do voluntário
+                </label>
+                <input
+                  type="text"
+                  value={newVolunteerName}
+                  onChange={(e) => setNewVolunteerName(e.target.value)}
+                  placeholder="Nome completo"
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Área
+                </label>
+                <select
+                  value={newVolunteerArea}
+                  onChange={(e) => setNewVolunteerArea(e.target.value)}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
+                >
+                  <option value="">Selecione a área</option>
+                  {areas.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowAddVolunteer(false)}
+                  className="rounded-lg border border-stone-300 px-4 py-2 font-medium text-stone-700 hover:bg-stone-100"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={!newVolunteerName.trim() || !newVolunteerArea || loading}
+                  className="rounded-lg bg-stone-950 px-4 py-2 font-medium text-white hover:bg-stone-800 disabled:bg-stone-400"
+                >
+                  {loading ? "Registrando..." : "Cadastrar e retirar crachá"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-lg shadow-sm border border-stone-200">
         <div className="p-4 border-b">
