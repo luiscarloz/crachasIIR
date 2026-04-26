@@ -47,6 +47,8 @@ export default function CheckInPage() {
   const [newVolunteerName, setNewVolunteerName] = useState("");
   const [newVolunteerArea, setNewVolunteerArea] = useState("");
   const [showAddVolunteer, setShowAddVolunteer] = useState(false);
+  const [showAddArea, setShowAddArea] = useState(false);
+  const [newAreaName, setNewAreaName] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
@@ -65,11 +67,14 @@ export default function CheckInPage() {
     if (res.ok) setVolunteers(await res.json());
   }, []);
 
-  useEffect(() => {
-    fetch("/api/areas")
-      .then((r) => r.json())
-      .then(setAreas);
+  const loadAreas = useCallback(async () => {
+    const res = await fetch("/api/areas");
+    if (res.ok) setAreas(await res.json());
   }, []);
+
+  useEffect(() => {
+    loadAreas();
+  }, [loadAreas]);
 
   useEffect(() => {
     loadCheckins();
@@ -140,6 +145,35 @@ export default function CheckInPage() {
     await registerCheckin(volunteer.id);
   }
 
+  async function handleAddArea(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newAreaName.trim()) return;
+
+    setLoading(true);
+    setMessage({ text: "", type: "" });
+
+    const res = await fetch("/api/areas", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newAreaName.trim() }),
+    });
+
+    if (res.ok) {
+      const area = await res.json();
+      setNewAreaName("");
+      setShowAddArea(false);
+      setSelectedArea(area.id);
+      setNewVolunteerArea(area.id);
+      await loadAreas();
+      setMessage({ text: "Área cadastrada.", type: "success" });
+    } else {
+      const data = await res.json();
+      setMessage({ text: data.error || "Erro ao cadastrar área", type: "error" });
+    }
+
+    setLoading(false);
+  }
+
   async function handleCheckout(id: string) {
     const res = await fetch(`/api/checkins/${id}`, { method: "PATCH" });
     if (res.ok) {
@@ -176,13 +210,22 @@ export default function CheckInPage() {
       <div className="bg-white rounded-lg shadow-sm border border-stone-200 p-6 space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="font-semibold text-stone-950">Check-in de voluntário</h2>
-          <button
-            type="button"
-            onClick={() => setShowAddVolunteer(true)}
-            className="w-full sm:w-auto rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100"
-          >
-            Cadastrar voluntário novo
-          </button>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => setShowAddArea(true)}
+              className="w-full sm:w-auto rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100"
+            >
+              Cadastrar área
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowAddVolunteer(true)}
+              className="w-full sm:w-auto rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100"
+            >
+              Cadastrar voluntário novo
+            </button>
+          </div>
         </div>
 
         {message.text && (
@@ -333,6 +376,64 @@ export default function CheckInPage() {
                   className="rounded-lg bg-stone-950 px-4 py-2 font-medium text-white hover:bg-stone-800 disabled:bg-stone-400"
                 >
                   {loading ? "Registrando..." : "Cadastrar e retirar crachá"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showAddArea && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-stone-950">
+                  Cadastrar área
+                </h2>
+                <p className="mt-1 text-sm text-stone-500">
+                  A nova área aparece nos cadastros e no check-in.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddArea(false)}
+                className="rounded-lg px-3 py-1 text-xl leading-none text-stone-500 hover:bg-stone-100 hover:text-stone-900"
+                aria-label="Fechar"
+              >
+                x
+              </button>
+            </div>
+
+            <form onSubmit={handleAddArea} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nome da área
+                </label>
+                <input
+                  type="text"
+                  value={newAreaName}
+                  onChange={(e) => setNewAreaName(e.target.value)}
+                  placeholder="Ex: Recepção"
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900"
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowAddArea(false)}
+                  className="rounded-lg border border-stone-300 px-4 py-2 font-medium text-stone-700 hover:bg-stone-100"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={!newAreaName.trim() || loading}
+                  className="rounded-lg bg-stone-950 px-4 py-2 font-medium text-white hover:bg-stone-800 disabled:bg-stone-400"
+                >
+                  {loading ? "Salvando..." : "Cadastrar área"}
                 </button>
               </div>
             </form>
