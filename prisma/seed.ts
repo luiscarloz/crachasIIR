@@ -28,17 +28,17 @@ async function main() {
 
   // Create admin user
   const hashedPassword = await bcrypt.hash(
-    process.env.ADMIN_PASSWORD || "julia ibrasil",
+    process.env.ADMIN_PASSWORD || "configure-admin-password",
     10
   );
   await prisma.user.upsert({
-    where: { email: process.env.ADMIN_EMAIL || "julia@ibrasil.com" },
+    where: { email: process.env.ADMIN_EMAIL || "admin@example.com" },
     update: {
       password: hashedPassword,
       name: "Julia",
     },
     create: {
-      email: process.env.ADMIN_EMAIL || "julia@ibrasil.com",
+      email: process.env.ADMIN_EMAIL || "admin@example.com",
       password: hashedPassword,
       name: "Julia",
     },

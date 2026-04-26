@@ -10,9 +10,14 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Senha", type: "password" },
       },
       async authorize(credentials) {
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
+
         if (
-          credentials?.email === "julia@ibrasil.com" &&
-          credentials?.password === "julia ibrasil"
+          adminEmail &&
+          adminPassword &&
+          credentials?.email === adminEmail &&
+          credentials?.password === adminPassword
         ) {
           return { id: "1", email: credentials.email, name: "Julia" };
         }
